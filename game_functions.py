@@ -84,7 +84,6 @@ def fire_bullet(ai_settings, screen, ship, bullets):
         pygame.mixer.music.play(0)
 
 
-
 def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, play_button):
     """Update images on the screen, and flip to the new screen."""
     # Redraw the screen, each pass through the loop.

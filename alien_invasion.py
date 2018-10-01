@@ -1,3 +1,9 @@
+"""
+Andrew Nguyen
+andrew96nguyen@csu.fullerton.edu
+Space Invaders
+"""
+
 import pygame
 from pygame.sprite import Group
 

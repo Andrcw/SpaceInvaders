@@ -1,6 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
-
+import math
 
 
 class Alien1(Sprite):
@@ -13,7 +13,12 @@ class Alien1(Sprite):
         self.ai_settings = ai_settings
 
         # Load the alien image, and set its rect attribute.
-        self.image = pygame.image.load('images/alien1_a.png')
+        self.images = []
+        self.images.append(pygame.image.load('images/alien1_a.png'))
+        self.images.append(pygame.image.load('images/alien1_b.png'))
+
+        self.index = 0
+        self.image = self.images[self.index]
         self.rect = self.image.get_rect()
 
         # Start each new alien near the top left of the screen.
@@ -35,6 +40,11 @@ class Alien1(Sprite):
         """Move the alien right or left."""
         self.x += (self.ai_settings.alien_speed_factor * self.ai_settings.fleet_direction)
         self.rect.x = self.x
+
+        self.index += .08
+        if self.index >= len(self.images):
+            self.index = 0
+        self.image = self.images[math.floor(self.index)]
 
     def blitme(self):
         """Draw the alien at its current location."""
@@ -51,7 +61,12 @@ class Alien2(Sprite):
         self.ai_settings = ai_settings
 
         # Load the alien image, and set its rect attribute.
-        self.image = pygame.image.load('images/alien2_a.png')
+        self.images = []
+        self.images.append(pygame.image.load('images/alien2_a.png'))
+        self.images.append(pygame.image.load('images/alien2_b.png'))
+
+        self.index = 0
+        self.image = self.images[self.index]
         self.rect = self.image.get_rect()
 
         # Start each new alien near the top left of the screen.
@@ -73,6 +88,12 @@ class Alien2(Sprite):
         """Move the alien right or left."""
         self.x += (self.ai_settings.alien_speed_factor * self.ai_settings.fleet_direction)
         self.rect.x = self.x
+
+        # go thru index for animation
+        self.index += .08
+        if self.index >= len(self.images):
+            self.index = 0
+        self.image = self.images[math.floor(self.index)]
 
     def blitme(self):
         """Draw the alien at its current location."""
@@ -88,7 +109,12 @@ class Alien3(Sprite):
         self.ai_settings = ai_settings
 
         # Load the alien image, and set its rect attribute.
-        self.image = pygame.image.load('images/alien3_a.png')
+        self.images = []
+        self.images.append(pygame.image.load('images/alien3_a.png'))
+        self.images.append(pygame.image.load('images/alien3_b.png'))
+
+        self.index = 0
+        self.image = self.images[self.index]
         self.rect = self.image.get_rect()
 
         # Start each new alien near the top left of the screen.
@@ -110,6 +136,12 @@ class Alien3(Sprite):
         """Move the alien right or left."""
         self.x += (self.ai_settings.alien_speed_factor * self.ai_settings.fleet_direction)
         self.rect.x = self.x
+
+        # go thru index for animation
+        self.index += .08
+        if self.index >= len(self.images):
+            self.index = 0
+        self.image = self.images[math.floor(self.index)]
 
     def blitme(self):
         """Draw the alien at its current location."""
