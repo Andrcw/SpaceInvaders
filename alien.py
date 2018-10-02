@@ -41,7 +41,7 @@ class Alien1(Sprite):
         self.x += (self.ai_settings.alien_speed_factor * self.ai_settings.fleet_direction)
         self.rect.x = self.x
 
-        self.index += .08
+        self.index += .1
         if self.index >= len(self.images):
             self.index = 0
         self.image = self.images[math.floor(self.index)]
@@ -90,7 +90,7 @@ class Alien2(Sprite):
         self.rect.x = self.x
 
         # go thru index for animation
-        self.index += .08
+        self.index += .1
         if self.index >= len(self.images):
             self.index = 0
         self.image = self.images[math.floor(self.index)]
@@ -138,7 +138,7 @@ class Alien3(Sprite):
         self.rect.x = self.x
 
         # go thru index for animation
-        self.index += .08
+        self.index += .1
         if self.index >= len(self.images):
             self.index = 0
         self.image = self.images[math.floor(self.index)]

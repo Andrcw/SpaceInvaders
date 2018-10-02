@@ -32,6 +32,7 @@ def run_game():
     # Make a ship, a group of bullets, and a group of aliens.
     ship = Ship(ai_settings, screen)
     bullets = Group()
+    bad_bullets = Group()
     aliens = Group()
     
     # Create the fleet of aliens.
@@ -39,13 +40,14 @@ def run_game():
 
     # Start the main loop for the game.
     while True:
-        gf.check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets)
+        gf.check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, bad_bullets)
         
         if stats.game_active:
             ship.update()
-            gf.update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets)
+            bad_bullets.update()
+            gf.update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets)
             gf.update_aliens(ai_settings, screen, stats, sb, ship, aliens, bullets)
         
-        gf.update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, play_button)
+        gf.update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets, play_button)
 
 run_game()
