@@ -54,7 +54,7 @@ class BadBullet(Sprite):
         self.y = float(self.rect.y)
 
         self.color = ai_settings.bullet_color
-        self.speed_factor = ai_settings.bullet_speed_factor
+        self.speed_factor = ai_settings.bad_bullet_speed_factor
 
     def update(self):
         """Move the bullet up the screen."""
