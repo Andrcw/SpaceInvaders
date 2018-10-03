@@ -1,5 +1,7 @@
 import pygame
+import math
 from pygame.sprite import Sprite
+
 
 class Ship(Sprite):
 
@@ -9,8 +11,19 @@ class Ship(Sprite):
         self.screen = screen
         self.ai_settings = ai_settings
 
-        # Load the ship image, and get its rect.
-        self.image = pygame.image.load('images/ship.png')
+        # Load the alien image, and set its rect attribute.
+        self.images = []
+        self.images.append(pygame.image.load('images/ship.png'))
+        self.images.append(pygame.image.load('images/ship2.png'))
+        self.images.append(pygame.image.load('images/ship3.png'))
+        self.images.append(pygame.image.load('images/ship4.png'))
+        self.images.append(pygame.image.load('images/ship5.png'))
+        self.images.append(pygame.image.load('images/ship6.png'))
+        self.images.append(pygame.image.load('images/ship7.png'))
+        self.images.append(pygame.image.load('images/ship8.png'))
+
+        self.index = 0
+        self.image = self.images[self.index]
         self.rect = self.image.get_rect()
         self.screen_rect = screen.get_rect()
 
@@ -24,7 +37,10 @@ class Ship(Sprite):
         # Movement flags.
         self.moving_right = False
         self.moving_left = False
-        
+
+        self.boom = False
+
+
     def center_ship(self):
         """Center the ship on the screen."""
         self.center = self.screen_rect.centerx
@@ -40,6 +56,16 @@ class Ship(Sprite):
         # Update rect object from self.center.
         self.rect.centerx = self.center
 
+        # Get ship to blow up
+        if self.boom:
+            self.index += 1
+            if self.index >= len(self.images):
+                self.index = 0
+                self.boom = False
+            self.image = self.images[math.floor(self.index)]
+
+
     def blitme(self):
         """Draw the ship at its current location."""
         self.screen.blit(self.image, self.rect)
+

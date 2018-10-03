@@ -1,12 +1,12 @@
 import sys
+
 from time import sleep
 import pygame
 
 from bullet import Bullet, BadBullet
-from alien import Alien1
-from alien import Alien2
-from alien import Alien3
+from alien import Alien1, Alien2, Alien3
 from random import randint
+import math
 
 
 def check_keydown_events(event, ai_settings, screen, ship, bullets, bad_bullets, aliens):
@@ -144,7 +144,7 @@ def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bu
 
 
     check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship,
-                                  aliens, bullets, bad_bullets)
+                                  aliens, bullets, bad_bullets )
 
 
 def check_high_score(stats, sb):
@@ -161,8 +161,9 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
 
     if collisions:
         for aliens in collisions.values():
-            stats.score += ai_settings.alien_points * len(aliens)
-            sb.prep_score()
+            for a in aliens:
+                stats.score += a.score * len(aliens)
+                sb.prep_score()
         check_high_score(stats, sb)
 
     if len(aliens) == 0:
@@ -217,8 +218,7 @@ def ship_hit(ai_settings, screen, stats, sb, ship, aliens, bullets):
     # sleep(0.5)
 
 
-def check_aliens_bottom(ai_settings, screen, stats, sb, ship, aliens,
-        bullets):
+def check_aliens_bottom(ai_settings, screen, stats, sb, ship, aliens, bullets):
     """Check if any aliens have reached the bottom of the screen."""
     screen_rect = screen.get_rect()
     for alien in aliens.sprites():
@@ -244,6 +244,7 @@ def update_aliens(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bul
     if pygame.sprite.spritecollideany(ship, bad_bullets):
         pygame.sprite.spritecollideany(ship, bad_bullets).kill()
         ship_hit(ai_settings, screen, stats, sb, ship, aliens, bullets)
+        ship.boom = True
 
     # Look for aliens hitting the bottom of the screen.
     check_aliens_bottom(ai_settings, screen, stats, sb, ship, aliens, bullets)

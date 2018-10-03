@@ -14,7 +14,11 @@ from button import Button
 from ship import Ship
 import game_functions as gf
 
+
 def run_game():
+
+    clock = pygame.time.Clock()
+
     # Initialize pygame, settings, and screen object.
     pygame.init()
     ai_settings = Settings()
@@ -50,5 +54,6 @@ def run_game():
             gf.update_aliens(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets)
         
         gf.update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets, play_button)
+        clock.tick(60)
 
 run_game()

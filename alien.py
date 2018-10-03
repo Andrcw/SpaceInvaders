@@ -16,10 +16,14 @@ class Alien1(Sprite):
         self.images = []
         self.images.append(pygame.image.load('images/alien1_a.png'))
         self.images.append(pygame.image.load('images/alien1_b.png'))
+        self.images.append(pygame.image.load('images/alien1_c.png'))
+        self.images.append(pygame.image.load('images/alien1_d.png'))
 
         self.index = 0
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
+        self.boom = False
+        self.score = 10
 
         # Start each new alien near the top left of the screen.
         self.rect.x = self.rect.width
@@ -41,9 +45,13 @@ class Alien1(Sprite):
         self.x += (self.ai_settings.alien_speed_factor * self.ai_settings.fleet_direction)
         self.rect.x = self.x
 
-        self.index += .1
-        if self.index >= len(self.images):
+        self.index += .5
+        if self.index >= 2 and not self.boom:
             self.index = 0
+        if self.boom:
+            if self.index >= 4:
+                self.index = 0
+                self.boom = False
         self.image = self.images[math.floor(self.index)]
 
     def blitme(self):
@@ -76,6 +84,8 @@ class Alien2(Sprite):
         # Store the alien's exact position.
         self.x = float(self.rect.x)
 
+        self.score = 20
+
     def check_edges(self):
         """Return True if alien is at edge of screen."""
         screen_rect = self.screen.get_rect()
@@ -90,7 +100,7 @@ class Alien2(Sprite):
         self.rect.x = self.x
 
         # go thru index for animation
-        self.index += .1
+        self.index += .5
         if self.index >= len(self.images):
             self.index = 0
         self.image = self.images[math.floor(self.index)]
@@ -124,6 +134,8 @@ class Alien3(Sprite):
         # Store the alien's exact position.
         self.x = float(self.rect.x)
 
+        self.score = 40
+
     def check_edges(self):
         """Return True if alien is at edge of screen."""
         screen_rect = self.screen.get_rect()
@@ -138,7 +150,7 @@ class Alien3(Sprite):
         self.rect.x = self.x
 
         # go thru index for animation
-        self.index += .1
+        self.index += .5
         if self.index >= len(self.images):
             self.index = 0
         self.image = self.images[math.floor(self.index)]
