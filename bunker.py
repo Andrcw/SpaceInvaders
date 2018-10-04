@@ -1,5 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
+from PIL import Image
+import random
 
 
 class Bunker(Sprite):

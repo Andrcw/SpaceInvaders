@@ -6,17 +6,18 @@ import pygame
 from bullet import Bullet, BadBullet
 from alien import Alien1, Alien2, Alien3
 from random import randint
+from bunker import Bunker
 import math
 
 
-def check_keydown_events(event, ai_settings, screen, ship, bullets, bad_bullets, aliens):
+def check_keydown_events(event, ai_settings, screen, ship, bullets, bad_bullets, aliens, stats):
     """Respond to keypresses."""
     if event.key == pygame.K_RIGHT:
         ship.moving_right = True
     elif event.key == pygame.K_LEFT:
         ship.moving_left = True
     elif event.key == pygame.K_SPACE:
-        fire_bullet(ai_settings, screen, ship, bullets)
+        fire_bullet(ai_settings, screen, ship, bullets, stats)
     elif event.key == pygame.K_q:
         sys.exit()
 
@@ -29,23 +30,21 @@ def check_keyup_events(event, ship):
         ship.moving_left = False
 
 
-def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens,
-        bullets, bad_bullets):
+def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, bad_bullets, bunkers):
     """Respond to keypresses and mouse events."""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
         elif event.type == pygame.KEYDOWN:
-            check_keydown_events(event, ai_settings, screen, ship, bullets, bad_bullets, aliens)
+            check_keydown_events(event, ai_settings, screen, ship, bullets, bad_bullets, aliens, stats)
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            check_play_button(ai_settings, screen, stats, sb, play_button,
-                              ship, aliens, bullets, mouse_x, mouse_y)
+            check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, mouse_x, mouse_y, bunkers)
 
 
-def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, mouse_x, mouse_y):
+def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, mouse_x, mouse_y, bunkers):
     """Start a new game when the player clicks Play."""
     button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
     if button_clicked and not stats.game_active:
@@ -74,15 +73,19 @@ def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens,
         create_fleet(ai_settings, screen, ship, aliens)
         ship.center_ship()
 
+        # Create Bunkers
+        create_bunkers(ai_settings, screen, bunkers)
 
-def fire_bullet(ai_settings, screen, ship, bullets):
+
+def fire_bullet(ai_settings, screen, ship, bullets, stats):
     """Fire a bullet, if limit not reached yet."""
     # Create a new bullet, add to bullets group.
-    if len(bullets) < ai_settings.bullets_allowed:
-        new_bullet = Bullet(ai_settings, screen, ship)
-        bullets.add(new_bullet)
-        pygame.mixer.music.load('sounds/shoot.wav')
-        pygame.mixer.music.play(0)
+    if stats.game_active and stats.game_pause:
+        if len(bullets) < ai_settings.bullets_allowed:
+            new_bullet = Bullet(ai_settings, screen, ship)
+            bullets.add(new_bullet)
+            pygame.mixer.music.load('sounds/shoot.wav')
+            pygame.mixer.music.play(0)
 
 
 def fire_bad_bullet(ai_settings, screen, aliens, bad_bullets):
@@ -103,7 +106,7 @@ def fire_bad_bullet(ai_settings, screen, aliens, bad_bullets):
                 ai_settings.timer = 0
 
 
-def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets, play_button, bunker):
+def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets, play_button, bunkers, start):
     """Update images on the screen, and flip to the new screen."""
     # Redraw the screen, each pass through the loop.
     screen.fill(ai_settings.bg_color)
@@ -117,20 +120,25 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bul
 
     ship.blitme()
     aliens.draw(screen)
-    bunker.blitme()
-    
+
     # Draw the score information.
     sb.show_score()
+
+    # Draw bunker
+    bunkers.draw(screen)
     
     # Draw the play button if the game is inactive.
     if not stats.game_active:
+        screen.fill((0, 0, 0))
+        start.start_blit(screen)
+        start.start_update(stats)
         play_button.draw_button()
 
     # Make the most recently drawn screen visible.
     pygame.display.flip()
 
 
-def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets):
+def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets, bunkers, bad_bullets):
     """Update position of bullets, and get rid of old bullets."""
     # Update bullet positions.
     bullets.update()
@@ -144,9 +152,7 @@ def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bu
         if bad_bullet.rect.bottom >= 800:
             bad_bullets.remove(bad_bullet)
 
-
-    check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship,
-                                  aliens, bullets, bad_bullets )
+    check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, bullets, bunkers, bad_bullets)
 
 
 def check_high_score(stats, sb):
@@ -156,8 +162,12 @@ def check_high_score(stats, sb):
         sb.prep_high_score()
 
 
-def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets):
+def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, bullets, bunkers, bad_bullets):
     """Respond to bullet-alien collisions."""
+    # Remove any bullets that have collided with bunker
+    pygame.sprite.groupcollide(bunkers, bad_bullets, False, True)
+    pygame.sprite.groupcollide(bunkers, bullets, False, True)
+
     # Remove any bullets and aliens that have collided.
     collisions = pygame.sprite.groupcollide(bullets, aliens, True, False)
 
@@ -299,3 +309,16 @@ def create_fleet(ai_settings, screen, ship, aliens):
         create_alien2(ai_settings, screen, aliens, alien_number, 5)
         create_alien2(ai_settings, screen, aliens, alien_number, 4)
         create_alien3(ai_settings, screen, aliens, alien_number, 3)
+
+
+def create_bunker(ai_settings, screen, bunkers, x):
+    bunker = Bunker(ai_settings, screen)
+    bunker.rect.centerx = x
+    bunker.add(bunkers)
+
+
+def create_bunkers(ai_settings, screen, bunkers):
+    create_bunker(ai_settings, screen, bunkers, 200)
+    create_bunker(ai_settings, screen, bunkers, 475)
+    create_bunker(ai_settings, screen, bunkers, 725)
+    create_bunker(ai_settings, screen, bunkers, 1000)
