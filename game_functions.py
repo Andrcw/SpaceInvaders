@@ -30,7 +30,7 @@ def check_keyup_events(event, ship):
         ship.moving_left = False
 
 
-def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, bad_bullets, bunkers):
+def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, bad_bullets, bunkers, start):
     """Respond to keypresses and mouse events."""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -41,11 +41,19 @@ def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bull
             check_keyup_events(event, ship)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, mouse_x, mouse_y, bunkers)
+            check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, mouse_x, mouse_y, bunkers, start)
 
 
-def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, mouse_x, mouse_y, bunkers):
+def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, mouse_x, mouse_y, bunkers, start):
     """Start a new game when the player clicks Play."""
+    high_clicked = start.high_btn.collidepoint(mouse_x, mouse_y)
+    if high_clicked and not stats.game_active:
+        start.page = False
+
+    back_clicked = start.back_btn.collidepoint(mouse_x, mouse_y)
+    if back_clicked and not stats.game_active:
+        start.page = True
+
     button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
     if button_clicked and not stats.game_active:
         # Reset the game settings.
@@ -61,7 +69,7 @@ def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens,
         
         # Reset the scoreboard images.
         sb.prep_score()
-        sb.prep_high_score()
+        sb.prep_high_score(stats)
         sb.prep_level()
         sb.prep_ships()
         
@@ -130,9 +138,11 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bul
     # Draw the play button if the game is inactive.
     if not stats.game_active:
         screen.fill((0, 0, 0))
-        start.start_blit(screen)
-        start.start_update(stats)
+        start.start_blit(screen, stats)  # delete stats
         play_button.draw_button()
+
+    # update text file
+    stats.update_txt()
 
     # Make the most recently drawn screen visible.
     pygame.display.flip()
@@ -159,7 +169,7 @@ def check_high_score(stats, sb):
     """Check to see if there's a new high score."""
     if stats.score > stats.high_score:
         stats.high_score = stats.score
-        sb.prep_high_score()
+        sb.prep_high_score(stats)
 
 
 def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, bullets, bunkers, bad_bullets):
