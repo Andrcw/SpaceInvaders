@@ -43,7 +43,8 @@ class BadBullet(Sprite):
         self.screen = screen
 
         # Create bullet rect at (0, 0), then set correct position.
-        self.rect = pygame.Rect(0, 0, ai_settings.bullet_width, ai_settings.bullet_height)
+        # self.rect = pygame.Rect(0, 0, ai_settings.bullet_width, ai_settings.bullet_height)
+        self.rect = pygame.Rect(0, 0, 3, ai_settings.bullet_height)
         # self.rect.centerx = ship.rect.centerx
         # self.rect.top = ship.rect.top - 10
 
@@ -53,7 +54,7 @@ class BadBullet(Sprite):
         # Store a decimal value for the bullet's position.
         self.y = float(self.rect.y)
 
-        self.color = ai_settings.bullet_color
+        self.color = (255, 0, 0)
         self.speed_factor = ai_settings.bad_bullet_speed_factor
 
     def update(self):

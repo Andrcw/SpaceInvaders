@@ -58,6 +58,7 @@ def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens,
         # Reset the game statistics.
         stats.reset_stats()
         stats.game_active = True
+        stats.game_pause = True
         
         # Reset the scoreboard images.
         sb.prep_score()
@@ -85,7 +86,7 @@ def fire_bullet(ai_settings, screen, ship, bullets):
 
 
 def fire_bad_bullet(ai_settings, screen, aliens, bad_bullets):
-    if len(bad_bullets) < 6:
+    if len(bad_bullets) < 6 and len(aliens.sprites()) is not 0:
             new_bad_bullet = BadBullet(ai_settings, screen, aliens)
 
             last = len(aliens.sprites())
@@ -102,7 +103,7 @@ def fire_bad_bullet(ai_settings, screen, aliens, bad_bullets):
                 ai_settings.timer = 0
 
 
-def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets, play_button):
+def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets, play_button, bunker):
     """Update images on the screen, and flip to the new screen."""
     # Redraw the screen, each pass through the loop.
     screen.fill(ai_settings.bg_color)
@@ -116,6 +117,7 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bul
 
     ship.blitme()
     aliens.draw(screen)
+    bunker.blitme()
     
     # Draw the score information.
     sb.show_score()
@@ -157,11 +159,12 @@ def check_high_score(stats, sb):
 def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets):
     """Respond to bullet-alien collisions."""
     # Remove any bullets and aliens that have collided.
-    collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
+    collisions = pygame.sprite.groupcollide(bullets, aliens, True, False)
 
     if collisions:
         for aliens in collisions.values():
             for a in aliens:
+                a.boom = True
                 stats.score += a.score * len(aliens)
                 sb.prep_score()
         check_high_score(stats, sb)
@@ -244,7 +247,10 @@ def update_aliens(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bul
     if pygame.sprite.spritecollideany(ship, bad_bullets):
         pygame.sprite.spritecollideany(ship, bad_bullets).kill()
         ship_hit(ai_settings, screen, stats, sb, ship, aliens, bullets)
+        stats.game_pause = False
         ship.boom = True
+        pygame.mixer.music.load('sounds/explosion.wav')
+        pygame.mixer.music.play(0)
 
     # Look for aliens hitting the bottom of the screen.
     check_aliens_bottom(ai_settings, screen, stats, sb, ship, aliens, bullets)

@@ -12,6 +12,7 @@ from game_stats import GameStats
 from scoreboard import Scoreboard
 from button import Button
 from ship import Ship
+from bunker import Bunker
 import game_functions as gf
 
 
@@ -38,6 +39,7 @@ def run_game():
     bullets = Group()
     bad_bullets = Group()
     aliens = Group()
+    bunker = Bunker(ai_settings, screen)
     
     # Create the fleet of aliens.
     gf.create_fleet(ai_settings, screen, ship, aliens)
@@ -46,14 +48,15 @@ def run_game():
     while True:
         gf.check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, bad_bullets)
         
-        if stats.game_active:
-            ship.update()
+        if stats.game_active and stats.game_pause:
+            # ship.update()
             bad_bullets.update()
             gf.fire_bad_bullet(ai_settings, screen, aliens, bad_bullets)
             gf.update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets)
             gf.update_aliens(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets)
-        
-        gf.update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets, play_button)
+
+        ship.update(stats)
+        gf.update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, bad_bullets, play_button, bunker)
         clock.tick(60)
 
 run_game()

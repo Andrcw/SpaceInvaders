@@ -45,13 +45,16 @@ class Alien1(Sprite):
         self.x += (self.ai_settings.alien_speed_factor * self.ai_settings.fleet_direction)
         self.rect.x = self.x
 
-        self.index += .5
+        self.index += .05
         if self.index >= 2 and not self.boom:
             self.index = 0
         if self.boom:
+            if self.index < 2.5:
+                self.index = 2.5
             if self.index >= 4:
                 self.index = 0
                 self.boom = False
+                self.kill()
         self.image = self.images[math.floor(self.index)]
 
     def blitme(self):
@@ -72,6 +75,8 @@ class Alien2(Sprite):
         self.images = []
         self.images.append(pygame.image.load('images/alien2_a.png'))
         self.images.append(pygame.image.load('images/alien2_b.png'))
+        self.images.append(pygame.image.load('images/alien2_c.png'))
+        self.images.append(pygame.image.load('images/alien2_d.png'))
 
         self.index = 0
         self.image = self.images[self.index]
@@ -84,6 +89,7 @@ class Alien2(Sprite):
         # Store the alien's exact position.
         self.x = float(self.rect.x)
 
+        self.boom = False
         self.score = 20
 
     def check_edges(self):
@@ -99,10 +105,16 @@ class Alien2(Sprite):
         self.x += (self.ai_settings.alien_speed_factor * self.ai_settings.fleet_direction)
         self.rect.x = self.x
 
-        # go thru index for animation
-        self.index += .5
-        if self.index >= len(self.images):
+        self.index += .05
+        if self.index >= 2 and not self.boom:
             self.index = 0
+        if self.boom:
+            if self.index < 2.5:
+                self.index = 2.5
+            if self.index >= 4:
+                self.index = 0
+                self.boom = False
+                self.kill()
         self.image = self.images[math.floor(self.index)]
 
     def blitme(self):
@@ -122,6 +134,8 @@ class Alien3(Sprite):
         self.images = []
         self.images.append(pygame.image.load('images/alien3_a.png'))
         self.images.append(pygame.image.load('images/alien3_b.png'))
+        self.images.append(pygame.image.load('images/alien3_c.png'))
+        self.images.append(pygame.image.load('images/alien3_d.png'))
 
         self.index = 0
         self.image = self.images[self.index]
@@ -134,6 +148,7 @@ class Alien3(Sprite):
         # Store the alien's exact position.
         self.x = float(self.rect.x)
 
+        self.boom = False
         self.score = 40
 
     def check_edges(self):
@@ -149,10 +164,16 @@ class Alien3(Sprite):
         self.x += (self.ai_settings.alien_speed_factor * self.ai_settings.fleet_direction)
         self.rect.x = self.x
 
-        # go thru index for animation
-        self.index += .5
-        if self.index >= len(self.images):
+        self.index += .05
+        if self.index >= 2 and not self.boom:
             self.index = 0
+        if self.boom:
+            if self.index < 2.5:
+                self.index = 2.5
+            if self.index >= 4:
+                self.index = 0
+                self.boom = False
+                self.kill()
         self.image = self.images[math.floor(self.index)]
 
     def blitme(self):

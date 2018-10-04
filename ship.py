@@ -45,23 +45,25 @@ class Ship(Sprite):
         """Center the ship on the screen."""
         self.center = self.screen_rect.centerx
         
-    def update(self):
+    def update(self, stats):
         """Update the ship's position, based on movement flags."""
         # Update the ship's center value, not the rect.
-        if self.moving_right and self.rect.right < self.screen_rect.right:
-            self.center += self.ai_settings.ship_speed_factor
-        if self.moving_left and self.rect.left > 0:
-            self.center -= self.ai_settings.ship_speed_factor
+        if stats.game_pause:
+            if self.moving_right and self.rect.right < self.screen_rect.right:
+                self.center += self.ai_settings.ship_speed_factor
+            if self.moving_left and self.rect.left > 0:
+                self.center -= self.ai_settings.ship_speed_factor
             
         # Update rect object from self.center.
         self.rect.centerx = self.center
 
         # Get ship to blow up
         if self.boom:
-            self.index += 1
+            self.index += .1
             if self.index >= len(self.images):
                 self.index = 0
                 self.boom = False
+                stats.game_pause = True
             self.image = self.images[math.floor(self.index)]
 
 
