@@ -40,7 +40,6 @@ class Ship(Sprite):
 
         self.boom = False
 
-
     def center_ship(self):
         """Center the ship on the screen."""
         self.center = self.screen_rect.centerx
@@ -66,8 +65,6 @@ class Ship(Sprite):
                 stats.game_pause = True
             self.image = self.images[math.floor(self.index)]
 
-
     def blitme(self):
         """Draw the ship at its current location."""
         self.screen.blit(self.image, self.rect)
-

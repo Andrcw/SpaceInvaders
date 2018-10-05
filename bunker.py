@@ -1,11 +1,10 @@
 import pygame
 from pygame.sprite import Sprite
-from PIL import Image
-import random
+# from PIL import Image
+# import random
 
 
 class Bunker(Sprite):
-
     def __init__(self, ai_settings, screen):
         """Initialize and set its starting position."""
         super(Bunker, self).__init__()

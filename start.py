@@ -74,6 +74,5 @@ class Start:
             self.hss = self.title.render(str(stats.current), True, self.white)
             screen.blit(self.hss, self.hss_btn)
 
-
         # Display
         pygame.display.flip()

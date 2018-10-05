@@ -121,6 +121,7 @@ class Alien2(Sprite):
         """Draw the alien at its current location."""
         self.screen.blit(self.image, self.rect)
 
+
 class Alien3(Sprite):
     """A class to represent a single alien in the fleet."""
 
@@ -178,4 +179,46 @@ class Alien3(Sprite):
 
     def blitme(self):
         """Draw the alien at its current location."""
+        self.screen.blit(self.image, self.rect)
+
+
+class UFO(Sprite):
+    """A class to represent a single alien in the fleet."""
+
+    def __init__(self, ai_settings, screen):
+        """Initialize and set its starting position."""
+        super(UFO, self).__init__()
+        self.screen = screen
+        self.ai_settings = ai_settings
+
+        # Load the ship image, and get its rect.
+        self.image = pygame.image.load('images/UFO.png')
+        self.rect = self.image.get_rect()
+        self.screen_rect = screen.get_rect()
+
+        # Start each new ship at the bottom center of the screen.
+        self.rect.left = self.screen_rect.left
+        self.rect.top = self.screen_rect.top + 100
+
+        # Store a decimal value for the ship's center.
+        self.center = float(self.rect.centerx)
+
+        # Movement flags.
+        self.moving_right = True
+        self.moving_left = False
+
+        self.boom = False
+
+    def update(self, screen):
+        if self.moving_right:
+            self.rect.centerx += 2
+            if self.rect.centerx > self.screen_rect.right:
+                self.rect.left -= 4000
+
+        if self.boom is True:
+            self.rect.left -= 2000
+
+            self.boom = False
+
+    def blitme(self):
         self.screen.blit(self.image, self.rect)

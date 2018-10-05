@@ -1,4 +1,4 @@
-class GameStats():
+class GameStats:
     """Track statistics for Alien Invasion."""
     
     def __init__(self, ai_settings):
@@ -18,6 +18,10 @@ class GameStats():
         # Open high score txt
         self.wr = open('high_score.txt', 'r+')
         self.current = int(self.wr.read())
+
+        self.ships_left = self.ai_settings.ship_limit
+        self.score = 0
+        self.level = 1
         
     def reset_stats(self):
         """Initialize statistics that can change during the game."""
